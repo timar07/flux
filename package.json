@@ -1,5 +1,6 @@
 {
   "scripts": {
+    "start": "npx ts-node ./src/main.ts",
     "test": "mocha --require ts-node/register ./src/tests/*.ts"
   },
   "devDependencies": {
