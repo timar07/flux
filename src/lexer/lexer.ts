@@ -1,34 +1,101 @@
+import DescribableError from "../core/describableError";
+import DebugInfo from "../core/debugInfo";
 import { Token, TokenTag } from "./token";
+import FilePosition from "../core/filePosition";
 
 export class Lexer {
     private current = 0;
     private start = 0;
-    private line = 0;
-    private col = 0;
+    private pos: FilePosition = {
+        line: 0,
+        col: 0
+    };
 
     constructor(
         private src: string,
-        private fileName: string
     ) {}
 
     public getTokens(): Token[] {
-        let tokens: Token[] = [];
+        const tokens: Token[] = [];
 
-        while (this.current < this.src.length) {
+        while (!this.isAtEnd()) {
             tokens.push(this.getToken());
         }
 
         return tokens;
     }
 
-    private getToken() {
+    private getToken(): Token {
         this.start = this.current;
 
         switch (this.advance()) {
-            case '+':
+            case ' ': case '\t': case '\n': return this.getToken();
+            case '(': return this.createToken(TokenTag.LeftParen);
+            case ')': return this.createToken(TokenTag.RightParen);
+            case '{': return this.createToken(TokenTag.LeftCurly);
+            case '}': return this.createToken(TokenTag.RightCurly);
+            case '.': return this.createToken(TokenTag.Period);
+            case ',': return this.createToken(TokenTag.Comma);
+            case ';': return this.createToken(TokenTag.Semicolon);
+            case '^': return this.createToken(TokenTag.Circ);
+            case '=': {
+                if (this.match('=')) {
+                    return this.createToken(TokenTag.EqualEqual);
+                }
+
+                return this.createToken(TokenTag.Equal)
+            }
+            case '>': {
+                if (this.match('=')) {
+                    return this.createToken(TokenTag.GreaterEqual);
+                }
+
+                return this.createToken(TokenTag.Greater);
+            }
+            case '<': {
+                if (this.match('=')) {
+                    return this.createToken(TokenTag.LessEqual);
+                }
+
+                return this.createToken(TokenTag.Less);
+            }
+            case '+': {
+                if (this.match('=')) {
+                    return this.createToken(TokenTag.PlusEqual);
+                }
+
                 return this.createToken(TokenTag.Plus);
-            case '-':
+            }
+            case '-': {
+                if (this.match('=')) {
+                    return this.createToken(TokenTag.MinusEqual);
+                } else if (this.match('>')) {
+                    return this.createToken(TokenTag.ArrowRight);
+                }
+
                 return this.createToken(TokenTag.Minus);
+            }
+            case '*': {
+                if (this.match('=')) {
+                    return this.createToken(TokenTag.StarEqual);
+                }
+
+                return this.createToken(TokenTag.Star);
+            }
+            case '/': {
+                if (this.match('=')) {
+                    return this.createToken(TokenTag.SlashEqual);
+                }
+
+                return this.createToken(TokenTag.Slash);
+            }
+            case '!': {
+                if (this.match('=')) {
+                    return this.createToken(TokenTag.BangEqual)
+                }
+
+                return this.createToken(TokenTag.Bang);
+            }
             default:
                 return this.parseNumberOrIdentifier();
         }
@@ -40,17 +107,23 @@ export class Lexer {
         if (this.isNumber(ch))
             return this.parseNumber();
 
-        if (this.isIdentifier(ch))
-            return this.parseIdentifier();
-
-        throw new LexicalError(`unknown character '${ch}'`);
+        throw new LexicalError(
+            `unknown character '${ch}'`,
+            new DebugInfo(this.pos)
+        );
     }
 
     private parseNumber() {
-        this.start = this.current;
-
-        while (this.isNumber(this.peek())) {
+        while (!this.isAtEnd() && this.isNumber(this.peek())) {
             this.advance();
+        }
+
+        if (!this.isAtEnd() && this.peek() == '.') {
+            this.advance();
+
+            while (!this.isAtEnd() && this.isNumber(this.peek())) {
+                this.advance();
+            }
         }
 
         return this.createToken(TokenTag.Number);
@@ -60,8 +133,8 @@ export class Lexer {
         throw new Error("Method not implemented");
     }
 
-    private isIdentifier(char: string) {
-        return new RegExp("[a-zA-Z]").test(char);
+    private isIdentifierChar(char: string) {
+        return new RegExp("[a-zA-Z_]").test(char);
     }
 
     private isNumber(char: string) {
@@ -72,21 +145,62 @@ export class Lexer {
         return new Token(tag, this.start, this.current);
     }
 
+    private match(ch: string) {
+        if (this.peek() == ch) {
+            this.advance();
+            return true;
+        }
+
+        return false;
+    }
+
+    private next(): string {
+        return this.getCharAt(this.current+1);
+    }
+
     private prev(): string {
-        return this.src[this.current-1];
+        return this.getCharAt(this.current-1);
     }
 
     private advance() {
-        return this.src[this.current++];
+        const ch = this.getCharAt(this.current);
+
+        if (ch == '\n') {
+            this.pos.line++;
+            this.pos.col = 0;
+        } else {
+            this.pos.col++;
+        }
+
+        return this.getCharAt(this.current++);
     }
 
     private peek(): string {
-        return this.src[this.current];
+        return this.getCharAt(this.current);
+    }
+
+    private getCharAt(offset: number) {
+        if (offset <= this.src.length)
+            return this.src[offset]
+
+        throw new LexicalError(
+            'unexpected end of file',
+            new DebugInfo(this.pos)
+        );
+    }
+
+    private isAtEnd() {
+        return this.current >= this.src.length;
     }
 }
 
-class LexicalError extends Error {
-    constructor(message: string) {
-        super('Lexical error: ' + message);
-    }
+class LexicalError implements DescribableError {
+    constructor(
+        private message: string,
+        private debugInfo: DebugInfo
+    ) {}
+
+    public getType() { return 'LexicalError'; }
+    public getMessage() { return this.message; }
+    public getDebugInfo() { return this.debugInfo; }
 }
