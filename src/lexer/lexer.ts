@@ -106,6 +106,8 @@ export class Lexer {
 
         if (this.isNumber(ch))
             return this.parseNumber();
+        else if (this.isIdentifierChar(ch))
+            return this.parseIdentifier();
 
         throw new LexicalError(
             `unknown character '${ch}'`,
@@ -130,7 +132,11 @@ export class Lexer {
     }
 
     private parseIdentifier(): Token {
-        throw new Error("Method not implemented");
+        while (!this.isAtEnd() && this.isIdentifierChar(this.peek())) {
+            this.advance();
+        }
+
+        return this.createToken(TokenTag.Identifier);
     }
 
     private isIdentifierChar(char: string) {

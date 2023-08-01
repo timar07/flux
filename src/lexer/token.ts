@@ -14,9 +14,6 @@ export class Token {
     }
 }
 
-
-
-
 export enum TokenTag {
     Identifier,
     Number,

@@ -58,4 +58,11 @@ describe('Lexer', function () {
       new Token(TokenTag.Bang, 15, 16),
     ])
   })
+
+  it('should parse identifiers', function () {
+    assert.deepEqual(new Lexer('hello world').getTokens(), [
+      new Token(TokenTag.Identifier, 0, 5),
+      new Token(TokenTag.Identifier, 6, 11),
+    ])
+  })
 });
