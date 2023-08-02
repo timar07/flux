@@ -96,9 +96,24 @@ export class Lexer {
 
                 return this.createToken(TokenTag.Bang);
             }
+            case '"':
+                return this.parseString();
             default:
                 return this.parseNumberOrIdentifier();
         }
+    }
+
+    private parseString(): Token {
+        while (this.advance() != '"') {
+            if (this.isAtEnd()) {
+                throw new LexicalError(
+                    'unterminated string',
+                    new DebugInfo(this.pos)
+                );
+            }
+        }
+
+        return this.createToken(TokenTag.String);
     }
 
     private parseNumberOrIdentifier(): Token {

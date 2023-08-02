@@ -41,5 +41,6 @@ export enum TokenTag {
     Equal,
     EqualEqual,
     GreaterEqual,
-    Greater
+    Greater,
+    String
 }
