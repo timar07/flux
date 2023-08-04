@@ -42,5 +42,13 @@ export enum TokenTag {
     EqualEqual,
     GreaterEqual,
     Greater,
-    String
+    String,
+    Else,
+    Function,
+    False,
+    Print,
+    True,
+    If,
+    Return,
+    Loop
 }

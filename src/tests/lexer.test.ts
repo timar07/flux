@@ -73,4 +73,20 @@ describe('Lexer', function () {
       new Token(TokenTag.String, 21, 26),
     ])
   })
+
+  it('should parse keywords', function () {
+    assert.deepEqual(
+      new Lexer(
+        'else print true if return loop function false'
+      ).getTokens(), [
+        new Token(TokenTag.Else, 0, 4),
+        new Token(TokenTag.Print, 5, 10),
+        new Token(TokenTag.True, 11, 15),
+        new Token(TokenTag.If, 16, 18),
+        new Token(TokenTag.Return, 19, 25),
+        new Token(TokenTag.Loop, 26, 30),
+        new Token(TokenTag.Function, 31, 39),
+        new Token(TokenTag.False, 40, 45),
+    ])
+  })
 });

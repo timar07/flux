@@ -99,7 +99,7 @@ export class Lexer {
             case '"':
                 return this.parseString();
             default:
-                return this.parseNumberOrIdentifier();
+                return this.parseNumberOrKeyword();
         }
     }
 
@@ -116,18 +116,38 @@ export class Lexer {
         return this.createToken(TokenTag.String);
     }
 
-    private parseNumberOrIdentifier(): Token {
+    private parseNumberOrKeyword(): Token {
         const ch = this.prev();
 
         if (this.isNumber(ch))
             return this.parseNumber();
         else if (this.isIdentifierChar(ch))
-            return this.parseIdentifier();
+            return this.parseKeyword();
 
         throw new LexicalError(
             `unknown character '${ch}'`,
             new DebugInfo(this.pos)
         );
+    }
+
+    private parseKeyword(): Token {
+        switch (this.prev()) {
+            case 'e': return this.acceptWord('lse', TokenTag.Else);
+            case 'p': return this.acceptWord('rint', TokenTag.Print);
+            case 't': return this.acceptWord('rue', TokenTag.True);
+            case 'i': return this.acceptWord('f', TokenTag.If);
+            case 'r': return this.acceptWord('eturn', TokenTag.Return);
+            case 'l': return this.acceptWord('oop', TokenTag.Loop);
+            case 'f': {
+                switch (this.peek()) {
+                    case 'u': return this.acceptWord('unction', TokenTag.Function);
+                    case 'a': return this.acceptWord('alse', TokenTag.False);
+                    default: return this.parseIdentifier();
+                }
+            }
+            default:
+                return this.parseIdentifier();
+        }
     }
 
     private parseNumber() {
@@ -144,6 +164,14 @@ export class Lexer {
         }
 
         return this.createToken(TokenTag.Number);
+    }
+
+    private acceptWord(word: string, tag: TokenTag): Token {
+        if (this.matchWord(word)) {
+            return this.createToken(tag);
+        }
+
+        return this.parseIdentifier();
     }
 
     private parseIdentifier(): Token {
@@ -164,6 +192,20 @@ export class Lexer {
 
     private createToken(tag: TokenTag): Token {
         return new Token(tag, this.start, this.current);
+    }
+
+    private matchWord(word: string) {
+        if (this.checkWord(word)) {
+            this.current += word.length;
+            this.pos.col += word.length;
+            return true;
+        }
+
+        return false;
+    }
+
+    private checkWord(word: string): boolean {
+        return this.src.slice(this.current, this.current+word.length) == word;
     }
 
     private match(ch: string) {
