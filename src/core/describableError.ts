@@ -1,7 +1,9 @@
-import DebugInfo from "./debugInfo";
+import DebugInfo from './debugInfo';
 
-export default interface DescribableError {
+interface DescribableError {
     getType(): string;
     getMessage(): string;
     getDebugInfo(): DebugInfo;
 }
+
+export default DescribableError;

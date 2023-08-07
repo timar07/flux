@@ -1,4 +1,4 @@
-import DescribableError from "./describableError";
+import DescribableError from './describableError';
 
 export default class ErrorFormatter {
     constructor(

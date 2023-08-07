@@ -1,7 +1,7 @@
-import DescribableError from "../core/describableError";
-import DebugInfo from "../core/debugInfo";
-import { Token, TokenTag } from "./token";
-import FilePosition from "../core/filePosition";
+import DescribableError from '../core/describableError';
+import DebugInfo from '../core/debugInfo';
+import FilePosition from '../core/filePosition';
+import { Token, TokenTag } from './token';
 
 export class Lexer {
     private current = 0;
@@ -43,7 +43,7 @@ export class Lexer {
                     return this.createToken(TokenTag.EqualEqual);
                 }
 
-                return this.createToken(TokenTag.Equal)
+                return this.createToken(TokenTag.Equal);
             }
             case '>': {
                 if (this.match('=')) {
@@ -91,7 +91,7 @@ export class Lexer {
             }
             case '!': {
                 if (this.match('=')) {
-                    return this.createToken(TokenTag.BangEqual)
+                    return this.createToken(TokenTag.BangEqual);
                 }
 
                 return this.createToken(TokenTag.Bang);
@@ -183,11 +183,11 @@ export class Lexer {
     }
 
     private isIdentifierChar(char: string) {
-        return new RegExp("[a-zA-Z_]").test(char);
+        return new RegExp('[a-zA-Z_]').test(char);
     }
 
     private isNumber(char: string) {
-        return new RegExp("[0-9]").test(char);
+        return new RegExp('[0-9]').test(char);
     }
 
     private createToken(tag: TokenTag): Token {
@@ -244,7 +244,7 @@ export class Lexer {
 
     private getCharAt(offset: number) {
         if (offset <= this.src.length)
-            return this.src[offset]
+            return this.src[offset];
 
         throw new LexicalError(
             'unexpected end of file',

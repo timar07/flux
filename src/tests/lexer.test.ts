@@ -1,5 +1,5 @@
 import 'mocha';
-import { assert } from "chai";
+import { assert } from 'chai';
 import { Lexer } from '../lexer/lexer';
 import { Token, TokenTag } from '../lexer/token';
 
@@ -9,7 +9,7 @@ describe('Lexer', function () {
       new Token(TokenTag.Number, 0, 1),
       new Token(TokenTag.Plus, 1, 2),
       new Token(TokenTag.Number, 2, 3),
-    ])
+    ]);
   });
 
   it('should parse 32+442', function () {
@@ -17,7 +17,7 @@ describe('Lexer', function () {
       new Token(TokenTag.Number, 0, 2),
       new Token(TokenTag.Plus, 2, 3),
       new Token(TokenTag.Number, 3, 6),
-    ])
+    ]);
   });
 
   it('should parse 32+321+154-342', function () {
@@ -29,13 +29,13 @@ describe('Lexer', function () {
       new Token(TokenTag.Number, 7, 10),
       new Token(TokenTag.Minus, 10, 11),
       new Token(TokenTag.Number, 11, 14)
-    ])
+    ]);
   });
 
   it('should parse floating point numbers', function () {
     assert.deepEqual(new Lexer('3.141592').getTokens(), [
       new Token(TokenTag.Number, 0, 8),
-    ])
+    ]);
   });
 
   it('should parse one-character tokens', function () {
@@ -56,23 +56,23 @@ describe('Lexer', function () {
       new Token(TokenTag.Star, 13, 14),
       new Token(TokenTag.Slash, 14, 15),
       new Token(TokenTag.Bang, 15, 16),
-    ])
-  })
+    ]);
+  });
 
   it('should parse identifiers', function () {
     assert.deepEqual(new Lexer('hello world').getTokens(), [
       new Token(TokenTag.Identifier, 0, 5),
       new Token(TokenTag.Identifier, 6, 11),
-    ])
-  })
+    ]);
+  });
 
   it('should parse strings', function () {
     assert.deepEqual(new Lexer('"hello, world" "foo" "bar"').getTokens(), [
       new Token(TokenTag.String, 0, 14),
       new Token(TokenTag.String, 15, 20),
       new Token(TokenTag.String, 21, 26),
-    ])
-  })
+    ]);
+  });
 
   it('should parse keywords', function () {
     assert.deepEqual(
@@ -87,8 +87,8 @@ describe('Lexer', function () {
         new Token(TokenTag.Loop, 26, 30),
         new Token(TokenTag.Function, 31, 39),
         new Token(TokenTag.False, 40, 45),
-    ])
-  })
+    ]);
+  });
 
   it('should parse test programm', function () {
     assert.deepEqual(
@@ -107,5 +107,5 @@ describe('Lexer', function () {
         new Token(TokenTag.RightCurly, 35, 36)
       ]
     );
-  })
+  });
 });
