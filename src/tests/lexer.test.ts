@@ -89,4 +89,23 @@ describe('Lexer', function () {
         new Token(TokenTag.False, 40, 45),
     ])
   })
+
+  it('should parse test programm', function () {
+    assert.deepEqual(
+      new Lexer('function test() {\n     return 2+2;\n}').getTokens(),
+      [
+        new Token(TokenTag.Function, 0, 8),
+        new Token(TokenTag.Identifier, 9, 13),
+        new Token(TokenTag.LeftParen, 13, 14),
+        new Token(TokenTag.RightParen, 14, 15),
+        new Token(TokenTag.LeftCurly, 16, 17),
+        new Token(TokenTag.Return, 23, 29),
+        new Token(TokenTag.Number, 30, 31),
+        new Token(TokenTag.Plus, 31, 32),
+        new Token(TokenTag.Number, 32, 33),
+        new Token(TokenTag.Semicolon, 33, 34),
+        new Token(TokenTag.RightCurly, 35, 36)
+      ]
+    );
+  })
 });
