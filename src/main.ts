@@ -3,7 +3,6 @@ import SourceReader from './core/sourceReader';
 import DescribableError from './core/describableError';
 import ErrorFormatter from './core/errorFormatter';
 import { Lexer } from './lexer/lexer';
-import { TokenTag } from './lexer/token';
 
 try {
     const cliArgs = new CLIArgsParser().parse();
@@ -11,9 +10,9 @@ try {
 
     console.log(cliArgs);
 
-    new Lexer(reader.readFile(cliArgs.fileName)).getTokens().forEach(token => {
-        console.log(TokenTag[token.getTag()] + ' ' + token.getPosition());
-    });
+    new Lexer(reader.readFile(cliArgs.fileName))
+        .getTokens()
+        .forEach(token => console.log(token.toString()));
 } catch (e) {
     console.log(new ErrorFormatter(e as DescribableError).toString());
 }

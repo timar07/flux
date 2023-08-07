@@ -12,6 +12,10 @@ export class Token {
     public getPosition() {
         return [this.start, this.end];
     }
+
+    public toString() {
+        return '<' + TokenTag[this.tag] + '[' + this.start + ':' + this.end + ']>';
+    }
 }
 
 export enum TokenTag {
