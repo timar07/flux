@@ -3,7 +3,7 @@ import DebugInfo from '../core/debugInfo';
 import FilePosition from '../core/filePosition';
 import { Token, TokenTag } from './token';
 
-export class Lexer {
+export default class Lexer {
     private current = 0;
     private start = 0;
     private pos: FilePosition = {

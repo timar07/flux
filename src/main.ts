@@ -2,7 +2,7 @@ import { CLIArgsParser } from './core/cliArgsParser';
 import SourceReader from './core/sourceReader';
 import DescribableError from './core/describableError';
 import ErrorFormatter from './core/errorFormatter';
-import { Lexer } from './lexer/lexer';
+import Lexer from './lexer/lexer';
 
 try {
     const cliArgs = new CLIArgsParser().parse();
