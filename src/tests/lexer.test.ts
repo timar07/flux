@@ -1,7 +1,7 @@
 import 'mocha';
 import { assert } from 'chai';
-import { Lexer } from '../lexer/lexer';
 import { Token, TokenTag } from '../lexer/token';
+import Lexer from '../lexer/lexer';
 
 describe('Lexer', function () {
   it('should parse 2+2', function () {
